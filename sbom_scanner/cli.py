@@ -42,7 +42,24 @@ def format_results(filepath):
     console.print(table)
 
 def main():
-    pass
+    parser = argparse.ArgumentParser(
+        description = "Scan a CycloneDX SBOM file for known vulnerabilites using OSV.dev"
+    )
+
+    parser.add_argument(
+        "--file",
+        "-f",
+        required=True,
+        help = "Path to the CylconeDX SBOM JSON file"
+    )
+
+    args = parser.parse_args()
+
+    if not os.path.exists(args.file):
+        print(f"File not found: {args.file}")
+        return
+
+    format_results(args.file)
 
 if __name__ == "__main__":
-    format_results("/Users/jordancroft/Documents/Documents - Jordan.’s MacBook Air/GitHub/sbom-vuln-scan/sample_data/sample_sbom.json")
+    main()
