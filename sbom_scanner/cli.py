@@ -1,4 +1,5 @@
 import argparse
+import os
 from sbom_scanner import scanner
 from rich.console import Console
 from rich.table import Table
@@ -26,7 +27,7 @@ def format_results(filepath):
         summary = vuln["summary"][:100] + "..." if len(vuln["summary"]) > 100 else vuln["summary"]
 
         if vuln["severity"]:
-            sev = ", ".join([s.get("score", "N/A") for s in vuln["severity"]])
+            sev = vuln["severity"]
         else:
             sev = "N/A"
 
@@ -40,6 +41,8 @@ def format_results(filepath):
 
     console.print(table)
 
+def main():
+    pass
 
 if __name__ == "__main__":
     format_results("/Users/jordancroft/Documents/Documents - Jordan.’s MacBook Air/GitHub/sbom-vuln-scan/sample_data/sample_sbom.json")
