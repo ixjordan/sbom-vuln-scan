@@ -1,9 +1,10 @@
 from sbom_scanner.sbom_parser import parse_sbom
+from manifest_parser import parse_requirements_txt
 from sbom_scanner.osv_api import query_osv
 from cvss import CVSS3
 
 
-def scan_sbom(filepath, ecosystem="PyPI"):
+def scan_file(filepath, ecosystem="PyPI"):
     """
     will scan the sbom and the query the OSV database, returning if any CVE are found for the packages
     :param filepath: filepath to sbom
@@ -13,14 +14,23 @@ def scan_sbom(filepath, ecosystem="PyPI"):
     results = []
 
     # packages will now contain list of tuples [(name, verion)]
-    packages = parse_sbom(filepath)
+    if filepath.endswith(".txt"):
+        packages = parse_requirements_txt(filepath)
+        print(packages)
+    else:
+        packages = parse_sbom(filepath)
 
     # loop through each package and query OSV
     for name, version in packages:
         # return vulns for that package
         vulns = query_osv(name, version)
+
+
         if not vulns:
+            print(f"{name} ({version or "unknown"}) --> No known vulnerabilities found")
             continue
+
+        print(f"{name} ({version or "unknown"}) --> {len(vulns)} vulnerabilities found.")
 
         # filter for only the most recent vulnerability
         top_vuln = vulns[0]
@@ -38,7 +48,14 @@ def scan_sbom(filepath, ecosystem="PyPI"):
             "summary": summary,
             "severity": parse_cvss_scores(severity)
         })
+    print("\n──────── Scan Summary ────────")
+    print(f"✅ Total packages checked: {len(packages)}")
+    print(f"⚠ Vulnerable packages found: {len(results)}")
+    print("───────────────────────────────")
+
     return results
+
+
 
 def parse_cvss_scores(severity_list):
     """
@@ -85,4 +102,4 @@ def parse_cvss_scores(severity_list):
 
 
 if __name__ == "__main__":
-    print(scan_sbom("/Users/jordancroft/Documents/Documents - Jordan.’s MacBook Air/GitHub/sbom-vuln-scan/sample_data/sample_sbom.json"))
+    print(scan_file("/Users/jordancroft/Documents/Documents - Jordan.’s MacBook Air/GitHub/sbom-vuln-scan/sample_data/requirements.txt"))

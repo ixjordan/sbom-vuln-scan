@@ -36,7 +36,7 @@ def parse_requirements_txt(filepath):
 
                 else:
                     package = line.strip()
-                    packages.append((package, "Unknown"))
+                    packages.append((package, None))
 
     # exception errors
     except FileNotFoundError:

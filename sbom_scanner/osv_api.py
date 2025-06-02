@@ -13,14 +13,25 @@ def query_osv(name, version, ecosystem= "PyPI"):
     # url for post request
     url = "https://api.osv.dev/v1/query"
 
+
     # payload to go to the post request
-    payload = {
-        "package":{
-            "name": name,
-            "ecosystem": ecosystem
-        },
-        "version": version
-    }
+    if version is not None:
+        payload = {
+            "package":{
+                "name": name,
+                "ecosystem": ecosystem
+            },
+            "version": version
+        }
+    else:
+        # if version isnt specified in package
+        payload = {
+            "package": {
+                "name": name,
+                "ecosystem": ecosystem
+            },
+        }
+
 
     try:
         # make a post request to OSV api
@@ -35,4 +46,4 @@ def query_osv(name, version, ecosystem= "PyPI"):
         return []
 
 if __name__ == "__main__":
-   print(query_osv("langroid", "0.1.100"))
+   print(query_osv("langroid", None))

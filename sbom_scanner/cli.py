@@ -7,7 +7,7 @@ from rich.table import Table
 
 
 def format_results(filepath):
-    results = scanner.scan_sbom(filepath)
+    results = scanner.scan_file(filepath)
     console = Console()
 
     if not results:

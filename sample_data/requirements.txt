@@ -3,4 +3,5 @@ requests~=2.32.3
 cvss~=3.4
 ollama~=0.4.8
 openai~=1.82.0
+django-helpdesk~=0.1.1
 python-dotenv
