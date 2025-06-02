@@ -2,6 +2,7 @@ from sbom_scanner.sbom_parser import parse_sbom
 from sbom_scanner.osv_api import query_osv
 from cvss import CVSS3
 
+
 def scan_sbom(filepath, ecosystem="PyPI"):
     """
     will scan the sbom and the query the OSV database, returning if any CVE are found for the packages
@@ -80,6 +81,8 @@ def parse_cvss_scores(severity_list):
             output.append("N/A")
     # return output list
     return ", ".join(output)
+
+
 
 if __name__ == "__main__":
     print(scan_sbom("/Users/jordancroft/Documents/Documents - Jordan.’s MacBook Air/GitHub/sbom-vuln-scan/sample_data/sample_sbom.json"))

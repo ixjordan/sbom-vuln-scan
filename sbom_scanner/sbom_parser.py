@@ -3,7 +3,7 @@ import json
 
 def parse_sbom(filepath):
     """
-    Parses a CYcloneDX JSON SBOM file and returns a list of (name, version) tuples
+    Parses a CycloneDX JSON SBOM file and returns a list of (name, version) tuples
     :param filepath: file path to sbom file
     :return: returns a list of tuples (name, version)
     """
