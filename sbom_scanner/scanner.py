@@ -1,5 +1,5 @@
 from sbom_scanner.sbom_parser import parse_sbom
-from manifest_parser import parse_requirements_txt
+from sbom_scanner.manifest_parser import parse_requirements_txt
 from sbom_scanner.osv_api import query_osv
 from cvss import CVSS3
 
