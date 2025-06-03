@@ -45,19 +45,33 @@ def main():
     parser = argparse.ArgumentParser(
         description = "Scan a CycloneDX SBOM file for known vulnerabilites using OSV.dev"
     )
+    # user must enter one option
+    group = parser.add_mutually_exclusive_group(required=True)
 
-    parser.add_argument(
+    # file format
+    group.add_argument(
         "--file",
         "-f",
-        required=True,
         help = "Path to the CylconeDX SBOM JSON file"
     )
+    # url format
+    group.add_argument(
+        "--url",
+        help= "URL to github package file"
+    )
+
+
 
     args = parser.parse_args()
 
+    # error if filepath doesnt exist
     if not os.path.exists(args.file):
         print(f"File not found: {args.file}")
         return
+    # if url is provided, will call download function
+    elif args.url:
+        pass
+
 
     format_results(args.file)
 
