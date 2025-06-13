@@ -4,9 +4,10 @@ from sbom_scanner.osv_api import query_osv
 from cvss import CVSS3
 
 
-def scan_file(filepath, ecosystem="PyPI"):
+def scan_file(filepath, input_type, ecosystem="PyPI"):
     """
     will scan the sbom and the query the OSV database, returning if any CVE are found for the packages
+    :param input_type:
     :param filepath: filepath to sbom
     :param ecosystem:
     :return: list of results
@@ -14,11 +15,13 @@ def scan_file(filepath, ecosystem="PyPI"):
     results = []
 
     # packages will now contain list of tuples [(name, verion)]
-    if filepath.endswith(".txt"):
+    if input_type == "requirements":
         packages = parse_requirements_txt(filepath)
         print(packages)
-    else:
+    elif input_type == "sbom":
         packages = parse_sbom(filepath)
+    else:
+        print("error, unsupported format")
 
     # loop through each package and query OSV
     for name, version in packages:

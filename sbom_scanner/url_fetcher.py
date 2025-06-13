@@ -8,7 +8,7 @@ def download_file_to_temp(url):
     :return:
     """
     # use helper function to convet to raw url
-    url = convert_github_blob_to_raw7(url)
+    url = convert_github_blob_to_raw(url)
     print(f"[i] Using raw URL: {url}")
 
     # request.get to access url

@@ -7,8 +7,8 @@ from rich.table import Table
 from sbom_scanner.url_fetcher import download_file_to_temp
 
 
-def format_results(filepath):
-    results = scanner.scan_file(filepath)
+def format_results(filepath, input_type):
+    results = scanner.scan_file(filepath, input_type)
     console = Console()
 
     if not results:
@@ -42,6 +42,7 @@ def format_results(filepath):
 
     console.print(table)
 
+
 def main():
     parser = argparse.ArgumentParser(
         description = "Scan a CycloneDX SBOM file for known vulnerabilites using OSV.dev"
@@ -60,13 +61,7 @@ def main():
         "--url",
         help= "URL to github package file"
     )
-
-
-
-
     args = parser.parse_args()
-
-
 
     # error if filepath doesnt exist
     if args.file:
@@ -74,14 +69,17 @@ def main():
         if not os.path.exists(args.file):
             print(f"File not found: {args.file}")
             return
-        format_results(args.file)
+
+        print(f"[i] Scanning local file: {args.file}")
+        format_results(args.file, "sbom")
     # if url is provided, will call download function
     elif args.url:
+        print(f"[i] Downloading file from URL: {args.url}")
         temp_path = download_file_to_temp(args.url)
-        format_results(temp_path)
+        format_results(temp_path, "requirements")
 
 
-    format_results(args.file)
+
 
 if __name__ == "__main__":
     main()
