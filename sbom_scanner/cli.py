@@ -4,6 +4,7 @@ from sbom_scanner import scanner
 from rich.console import Console
 from rich.table import Table
 
+from sbom_scanner.url_fetcher import download_file_to_temp
 
 
 def format_results(filepath):
@@ -62,15 +63,22 @@ def main():
 
 
 
+
     args = parser.parse_args()
 
+
+
     # error if filepath doesnt exist
-    if not os.path.exists(args.file):
-        print(f"File not found: {args.file}")
-        return
+    if args.file:
+        # if file path not accurate print error
+        if not os.path.exists(args.file):
+            print(f"File not found: {args.file}")
+            return
+        format_results(args.file)
     # if url is provided, will call download function
     elif args.url:
-        pass
+        temp_path = download_file_to_temp(args.url)
+        format_results(temp_path)
 
 
     format_results(args.file)
