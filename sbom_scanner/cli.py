@@ -71,12 +71,12 @@ def main():
             return
 
         print(f"[i] Scanning local file: {args.file}")
-        format_results(args.file, "sbom")
+        format_results(args.file, input_type="sbom")
     # if url is provided, will call download function
     elif args.url:
         print(f"[i] Downloading file from URL: {args.url}")
         temp_path = download_file_to_temp(args.url)
-        format_results(temp_path, "requirements")
+        format_results(temp_path, input_type="requirements")
 
 
 
