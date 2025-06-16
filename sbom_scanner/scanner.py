@@ -2,9 +2,10 @@ from sbom_scanner.sbom_parser import parse_sbom
 from sbom_scanner.manifest_parser import parse_requirements_txt
 from sbom_scanner.osv_api import query_osv
 from cvss import CVSS3
+from enums.scan_enums import InputType
 
 
-def scan_file(filepath, input_type, ecosystem="PyPI"):
+def scan_file(filepath, input_type: InputType, ecosystem="PyPI"):
     """
     will scan the sbom and the query the OSV database, returning if any CVE are found for the packages
     :param input_type:
@@ -13,12 +14,12 @@ def scan_file(filepath, input_type, ecosystem="PyPI"):
     :return: list of results
     """
     results = []
-
+    packages=''
     # packages will now contain list of tuples [(name, verion)]
-    if input_type == "requirements":
+    if input_type == InputType.REQUIREMENTS:
         packages = parse_requirements_txt(filepath)
         print(packages)
-    elif input_type == "sbom":
+    elif input_type == InputType.SBOM:
         packages = parse_sbom(filepath)
     else:
         print("error, unsupported format")

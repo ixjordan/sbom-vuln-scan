@@ -3,6 +3,7 @@ import os
 from sbom_scanner import scanner
 from rich.console import Console
 from rich.table import Table
+from enums.scan_enums import InputType
 
 from sbom_scanner.url_fetcher import download_file_to_temp
 
@@ -71,12 +72,22 @@ def main():
             return
 
         print(f"[i] Scanning local file: {args.file}")
-        format_results(args.file, input_type="sbom")
+        if args.file.endswith("requirements.txt"):
+            format_results(args.file, InputType.REQUIREMENTS )
+        elif args.file.endswith(".json"):
+            format_results(args.file, InputType.SBOM)
     # if url is provided, will call download function
     elif args.url:
+
         print(f"[i] Downloading file from URL: {args.url}")
-        temp_path = download_file_to_temp(args.url)
-        format_results(temp_path, input_type="requirements")
+        # condition if url is to a requirements file
+        if args.url.endswith("requirements.txt"):
+            temp_path = download_file_to_temp(args.url)
+            format_results(temp_path, InputType.REQUIREMENTS)
+        # condition if url is to an SBOM
+        elif args.url.endswith(".json"):
+            temp_path = download_file_to_temp(args.url)
+            format_results(temp_path, InputType.SBOM)
 
 
 
