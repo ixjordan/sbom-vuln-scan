@@ -1,97 +1,103 @@
-# 📦 SBOM Vulnerability Scanner
+# 🔐 SBOM Vulnerability Scanner
 
-A Python-based CLI tool that scans a **CycloneDX JSON SBOM** file and checks listed packages against the [OSV.dev](https://osv.dev) vulnerability database. Designed to help DevSecOps engineers and developers quickly identify known vulnerabilities in third-party dependencies.
-
----
-
-## 🚀 Project Background
-
-This tool was created as part of my ongoing DevSecOps learning journey. After building a license compliance checker, I wanted to expand into security vulnerabilities — especially within software supply chains.
-
-I started with SBOM parsing to avoid direct dependency file coupling, and then integrated live CVE lookup using the [OSV.dev API](https://osv.dev/docs/#section/Features/Querying). Finally, I incorporated `cvss` parsing to extract and format severity scores in a human-readable format.
+A security tool designed to scan software dependencies for known vulnerabilities using the [OSV.dev](https://osv.dev) vulnerability database.  
+It supports both **CycloneDX SBOMs** and **Python `requirements.txt`** files.  
+Built with both **CLI** and **API** interfaces, this project is designed for DevSecOps workflows and is structured to grow into a **contextual RAG (Retrieval-Augmented Generation)** system.
 
 ---
 
-## 🎯 Features
+## 🚀 Project Overview
 
-- ✅ Accepts CycloneDX-formatted SBOMs (JSON)
-- 🔍 Extracts `name`, `version` from `library` components
-- 🌐 Queries OSV.dev for known vulnerabilities (CVE, GHSA, etc.)
-- 🧠 Parses CVSS vector strings using the `cvss` Python library
-- 📊 CLI table output with colored formatting via `rich`
-- 🔧 Flags the **most severe vulnerability** per package
+This tool helps identify known vulnerabilities in third-party dependencies by:
+- Parsing software manifests (SBOMs or Python package lists)
+- Querying OSV.dev for CVEs
+- Providing enriched output including CVSS-based severity context
+- Offering both a **command-line interface (CLI)** and a **RESTful API** for flexible usage
+
+The scanner is modular and supports extensibility like:
+- Docker containerization
+- PostgreSQL for historical scans
+- Kubernetes deployment
+- LLM-based vulnerability explanations (planned)
 
 ---
 
-## 📄 Example Usage
+## ✅ Key Features
+
+- 📦 **Supports multiple formats**: CycloneDX SBOMs and `requirements.txt`
+- 🔗 **GitHub integration**: Accepts GitHub URLs and converts to raw content automatically
+- 🌐 **Live CVE lookups**: Powered by OSV.dev
+- 🔍 **Severity scoring**: Parses CVSS scores and includes intuitive icons
+- 🧰 **API ready**: Built with FastAPI (`/scan` endpoint)
+- 💻 **CLI ready**: Simple terminal-based scans
+
+---
+
+
+
+## 📦 Example CLI Usage
 
 ```bash
-# Basic scan
+# Scan local SBOM
 python -m sbom_scanner.cli --file sample_data/sample_sbom.json
+
+# Scan Python requirements.txt
+python -m sbom_scanner.cli --file sample_data/requirements.txt
+
+# Scan via GitHub URL
+python -m sbom_scanner.cli --url https://github.com/user/repo/blob/main/requirements.txt
 ```
 
-Sample Output:
+## 📡 API Usage
+
+You can also interact with the scanner through a RESTful API.
+
+### ▶️ Starting the API
+
+Run the following command to start the FastAPI server locally:
+
+```bash
+uvicorn api.main:app --reload
 ```
-🔍 CVE Scan Results from SBOM
-┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
-┃ Package ┃ Version ┃ CVE(s)             ┃ Summary                       ┃ Severity     ┃
-┡━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
-│ requests│ 2.28.1  │ CVE-2023-32681     │ Proxy header leak issue       │ 8.8 (High 🔴) │
-│ flask   │ 2.2.3   │ CVE-2023-30861     │ Session cookie exposure risk  │ 4.3 (Medium 🟠)│
-└─────────┴─────────┴────────────────────┴───────────────────────────────┴──────────────┘
-```
+
+### 🔍 POST /scan
+
+**Endpoint:** `/scan`  
+**Method:** `POST`  
+**Description:** Scan a local file path or a GitHub URL for known vulnerabilities.
 
 ---
 
-## 🔬 CVSS Integration
+### ✅ Request Body (JSON)
 
-Vulnerabilities often contain raw CVSS vectors like:
+#### Example using a local file path:
+```json
+{
+  "file_path": "sample_data/sample_sbom.json"
+}
 ```
-CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N
+#### Example using a local file path:
+```json
+{
+  "file_path": "sample_data/sample_sbom.json"
+}
 ```
-This tool uses the [`cvss`](https://pypi.org/project/cvss/) library to:
-- Parse the vector string
-- Calculate the base score
-- Return a formatted string like:
-  → `8.8 (High 🔴)`
-
-This allows for more intuitive risk visibility and future filtering/sorting.
-
----
-
-## 🧰 Tech Stack
-
-- Python 3.10+
-- `requests` for API calls
-- `json` for SBOM parsing
-- `rich` for CLI output
-- `argparse` for CLI interface
-- `cvss` for CVSS vector decoding
-
----
-
-## 🛠️ File Structure
+### ✅ Test API Interactively
 ```
-sbom-vuln-scan/
-├── sbom_scanner/
-│   ├── cli.py
-│   ├── osv_api.py
-│   ├── scanner.py
-│   └── sbom_parser.py
-├── sample_data/
-│   └── sample_sbom.json
-├── requirements.txt
-├── README.md
+http://localhost:8000/docs
 ```
+## 🧪 Response Example
 
----
-
-## 📌 Future Improvements
-- [ ] Add export to JSON or CSV
-- [ ] Add support for SPDX SBOMs
-- [ ] Support full CVE history (not just top match)
-- [ ] Ecosystem auto-detection from SBOM `purl`
-
----
-
-
+```json
+{
+ "results": [
+   {
+     "package": "django-helpdesk",
+     "version": "0.1.1",
+     "cve_id": ["CVE-2021-3994"],
+     "summary": "Cross-site scripting vulnerability",
+     "severity": "8.8 (High 🔴)"
+   }
+ ]
+}
+```
